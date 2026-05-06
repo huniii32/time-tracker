@@ -66,7 +66,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
       }
 
       if (!timeLog) {
-        setError("?섏젙???쒓컙 湲곕줉??李얠쓣 ???놁뒿?덈떎.");
+        setError("저장할 시간 기록 정보가 없습니다.");
         return;
       }
 
@@ -94,7 +94,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?좎쭨
+            작성일
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("log_date", event.target.value)}
@@ -104,7 +104,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?쒕룞 移댄뀒怨좊━
+            업무 유형
             <select
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
               onChange={(event) =>
@@ -122,7 +122,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?쒖옉 ?쒓컙
+            시작 시간
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("start_time", event.target.value)}
@@ -132,7 +132,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            醫낅즺 ?쒓컙
+            종료 시간
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("end_time", event.target.value)}
@@ -147,7 +147,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?쒕룞 ?댁슜
+            업무 내용
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("activity", event.target.value)}
@@ -157,7 +157,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              吏묒쨷??              <input
+              집중도              <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 max={5}
                 min={1}
@@ -168,7 +168,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
               />
             </label>
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              留뚯”??              <input
+              만족도              <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 max={5}
                 min={1}
@@ -180,7 +180,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
             </label>
           </div>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            硫붾え
+            메모
             <textarea
               className="mt-1 min-h-28 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("memo", event.target.value)}

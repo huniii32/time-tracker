@@ -69,7 +69,7 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
       }
 
       if (!goal) {
-        setError("?섏젙??紐⑺몴瑜?李얠쓣 ???놁뒿?덈떎.");
+        setError("저장할 목표 정보가 없습니다.");
         return;
       }
 
@@ -97,7 +97,8 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            紐⑺몴紐?            <input
+            목표명
+            <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("title", event.target.value)}
               required
@@ -107,7 +108,7 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              紐⑺몴 ?좏삎
+              목표 유형
               <select
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
                 onChange={(event) =>
@@ -124,7 +125,7 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
             </label>
 
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              紐⑺몴 ?덈꺼
+              목표 레벨
               <select
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
                 onChange={(event) =>
@@ -147,7 +148,7 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
 
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              湲곌컙
+              기간
               <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 onChange={(event) => updateField("period", event.target.value)}
@@ -157,7 +158,7 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
             </label>
 
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              ?곗꽑?쒖쐞
+              우선순위
               <select
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
                 onChange={(event) =>
@@ -174,7 +175,8 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
             </label>
 
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              吏꾪뻾瑜?              <input
+              진행률
+              <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 max={100}
                 min={0}
@@ -191,7 +193,7 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?깃났 湲곗?
+            성공 기준
             <textarea
               className="mt-1 min-h-28 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("success_criteria", event.target.value)}
@@ -199,7 +201,7 @@ export function GoalForm({ mode, goal }: GoalFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?뚭퀬
+            회고
             <textarea
               className="mt-1 min-h-28 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("retrospective", event.target.value)}

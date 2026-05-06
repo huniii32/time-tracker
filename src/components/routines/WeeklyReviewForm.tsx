@@ -68,7 +68,7 @@ export function WeeklyReviewForm({ mode, review }: WeeklyReviewFormProps) {
       }
 
       if (!review) {
-        setError("?섏젙???꾪겢由??쇰뱶諛깆쓣 李얠쓣 ???놁뒿?덈떎.");
+        setError("저장할 피드백 정보가 없습니다.");
         return;
       }
 
@@ -96,7 +96,8 @@ export function WeeklyReviewForm({ mode, review }: WeeklyReviewFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            二??쒖옉??            <input
+            주간 시작일
+            <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("week_start", event.target.value)}
               required
@@ -105,7 +106,7 @@ export function WeeklyReviewForm({ mode, review }: WeeklyReviewFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?대쾲 二?紐⑺몴
+            주간 요약
             <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("goals", event.target.value)}
@@ -114,7 +115,7 @@ export function WeeklyReviewForm({ mode, review }: WeeklyReviewFormProps) {
           </label>
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              紐⑺몴 ?ъ꽦瑜?              <input
+              목표 달성률              <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 max={100}
                 min={0}
@@ -125,19 +126,19 @@ export function WeeklyReviewForm({ mode, review }: WeeklyReviewFormProps) {
               />
             </label>
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              ??퉬 ?쒓컙
+              낭비 시간
               <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 min={0}
                 onChange={(event) => updateField("wasted_hours", event.target.value)}
-                placeholder="?쒓컙"
+                placeholder="시간"
                 step="0.5"
                 type="number"
                 value={values.wasted_hours}
               />
             </label>
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              猷⑦떞 留뚯”??              <input
+              루틴 만족도              <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 max={5}
                 min={1}
@@ -154,28 +155,32 @@ export function WeeklyReviewForm({ mode, review }: WeeklyReviewFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            媛???섑븳 ??            <textarea
+            잘한 점
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("best", event.target.value)}
               value={values.best}
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?꾩돩?좊뜕 ??            <textarea
+            개선할 점
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("regret", event.target.value)}
               value={values.regret}
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            諛곗슫 ??            <textarea
+            배운 점
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("learned", event.target.value)}
               value={values.learned}
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?ㅼ쓬 二??곸슜??            <textarea
+            다음 주 계획
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("next_week_action", event.target.value)}
               value={values.next_week_action}

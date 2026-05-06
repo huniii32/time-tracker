@@ -77,7 +77,7 @@ export function NoteForm({ mode, note }: NoteFormProps) {
       }
 
       if (!note) {
-        setError("?섏젙???명듃瑜?李얠쓣 ???놁뒿?덈떎.");
+        setError("저장할 노트 정보가 없습니다.");
         return;
       }
 
@@ -105,7 +105,8 @@ export function NoteForm({ mode, note }: NoteFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?명듃 ???            <select
+            노트 유형
+            <select
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
               onChange={(event) =>
                 updateField("note_type", event.target.value as NoteType)
@@ -120,7 +121,7 @@ export function NoteForm({ mode, note }: NoteFormProps) {
             </select>
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?좎쭨
+            작성일
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("entry_date", event.target.value)}
@@ -137,7 +138,7 @@ export function NoteForm({ mode, note }: NoteFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?쒕ぉ
+            제목
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("title", event.target.value)}
@@ -146,7 +147,7 @@ export function NoteForm({ mode, note }: NoteFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?붿빟
+            내용
             <textarea
               className="mt-1 min-h-28 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("content", event.target.value)}
@@ -155,11 +156,11 @@ export function NoteForm({ mode, note }: NoteFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?쒓렇
+            태그
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("tags", event.target.value)}
-              placeholder="?쇳몴濡?援щ텇"
+              placeholder="태그를 입력하세요"
               value={values.tags}
             />
           </label>
@@ -168,7 +169,7 @@ export function NoteForm({ mode, note }: NoteFormProps) {
 
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <h2 className="text-base font-bold text-[#1F2F5C]">
-          {selectedConfig.label} ?낅젰 ??ぉ
+          {selectedConfig.label} 추가 정보
         </h2>
         <div className="mt-3 space-y-3">
           {selectedConfig.fields.map((field) => {
@@ -198,7 +199,7 @@ export function NoteForm({ mode, note }: NoteFormProps) {
                     required={field.required}
                     value={value}
                   >
-                    <option value="">?좏깮</option>
+                    <option value="">선택</option>
                     {field.options?.map((option) => (
                       <option key={option} value={option}>
                         {option}

@@ -66,7 +66,7 @@ export function TaskForm({ mode, task }: TaskFormProps) {
       }
 
       if (!task) {
-        setError("?섏젙???낅Т瑜?李얠쓣 ???놁뒿?덈떎.");
+        setError("저장할 업무 정보가 없습니다.");
         return;
       }
 
@@ -94,7 +94,7 @@ export function TaskForm({ mode, task }: TaskFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?쒕ぉ
+            업무명
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("title", event.target.value)}
@@ -104,14 +104,15 @@ export function TaskForm({ mode, task }: TaskFormProps) {
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              ?붿껌??              <input
+              요청자
+              <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 onChange={(event) => updateField("requester", event.target.value)}
                 value={values.requester}
               />
             </label>
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              留덇컧湲고븳
+              마감일
               <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 onChange={(event) => updateField("due_date", event.target.value)}
@@ -122,7 +123,7 @@ export function TaskForm({ mode, task }: TaskFormProps) {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              ?곗꽑?쒖쐞
+              우선순위
               <select
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
                 onChange={(event) => updateField("priority", event.target.value as Priority)}
@@ -136,7 +137,7 @@ export function TaskForm({ mode, task }: TaskFormProps) {
               </select>
             </label>
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              ?곹깭
+              상태
               <select
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
                 onChange={(event) => updateField("status", event.target.value as TaskStatus)}
@@ -156,7 +157,7 @@ export function TaskForm({ mode, task }: TaskFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            紐⑺몴
+            목표
             <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("goal", event.target.value)}
@@ -164,14 +165,16 @@ export function TaskForm({ mode, task }: TaskFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            寃곌낵臾?            <textarea
+            산출물
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("output", event.target.value)}
               value={values.output}
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?쇰뱶諛?            <textarea
+            피드백
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("feedback", event.target.value)}
               value={values.feedback}
@@ -179,7 +182,7 @@ export function TaskForm({ mode, task }: TaskFormProps) {
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              留뚯”??              <input
+              만족도              <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 max={5}
                 min={1}
@@ -190,11 +193,11 @@ export function TaskForm({ mode, task }: TaskFormProps) {
               />
             </label>
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              ?쒓렇
+              태그
               <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 onChange={(event) => updateField("tags", event.target.value)}
-                placeholder="?쇳몴濡?援щ텇"
+                placeholder="태그를 입력하세요"
                 value={values.tags}
               />
             </label>

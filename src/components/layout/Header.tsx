@@ -57,10 +57,16 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-2">
           <Link
-            className="rounded-xl border border-[#E3E8F2] bg-white px-3 py-2 text-sm font-extrabold text-[#0B1F4D] shadow-sm transition-colors hover:bg-[#F5F7FB]"
+            className="inline-flex h-10 items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
             href="/settings"
           >
             설정
+          </Link>
+          <Link
+            className="inline-flex h-10 items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+            href="/guide"
+          >
+            설명서
           </Link>
           <SignOutButton />
         </div>

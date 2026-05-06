@@ -65,7 +65,7 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
       }
 
       if (!meeting) {
-        setError("?섏젙???뚯쓽瑜?李얠쓣 ???놁뒿?덈떎.");
+        setError("저장할 미팅 정보가 없습니다.");
         return;
       }
 
@@ -93,7 +93,8 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?뚯쓽紐?            <input
+            미팅 제목
+            <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("title", event.target.value)}
               required
@@ -102,7 +103,7 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              ?좎쭨
+              미팅 일자
               <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 onChange={(event) => updateField("meeting_date", event.target.value)}
@@ -112,7 +113,7 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
               />
             </label>
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              留덇컧湲고븳
+              마감일
               <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 onChange={(event) => updateField("due_date", event.target.value)}
@@ -122,10 +123,11 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
             </label>
           </div>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            李몄꽍??            <input
+            참석자
+            <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("attendees", event.target.value)}
-              placeholder="?쇳몴濡?援щ텇"
+              placeholder="참석자를 입력하세요"
               value={values.attendees}
             />
           </label>
@@ -135,7 +137,7 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            二쇱슂 ?쇱쓽 ?댁슜
+            논의 내용
             <textarea
               className="mt-1 min-h-28 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("discussion", event.target.value)}
@@ -143,7 +145,7 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            寃곗젙?ы빆
+            결정사항
             <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("decisions", event.target.value)}
@@ -151,7 +153,8 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?≪뀡?꾩씠??            <textarea
+            액션 아이템
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("action_items", event.target.value)}
               value={values.action_items}
@@ -159,11 +162,11 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              ?쒓렇
+              태그
               <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 onChange={(event) => updateField("tags", event.target.value)}
-                placeholder="?쇳몴濡?援щ텇"
+                placeholder="태그를 입력하세요"
                 value={values.tags}
               />
             </label>
@@ -174,7 +177,7 @@ export function MeetingForm({ mode, meeting }: MeetingFormProps) {
                 onChange={(event) => updateField("reflected", event.target.checked)}
                 type="checkbox"
               />
-              ?낅Т??諛섏쁺 ?꾨즺
+              반영 여부
             </label>
           </div>
         </div>

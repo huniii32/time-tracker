@@ -71,7 +71,7 @@ export function ReflectionForm({ mode, reflection }: ReflectionFormProps) {
       }
 
       if (!reflection) {
-        setError("?섏젙???뚭퀬瑜?李얠쓣 ???놁뒿?덈떎.");
+        setError("저장할 회고 정보가 없습니다.");
         return;
       }
 
@@ -99,7 +99,7 @@ export function ReflectionForm({ mode, reflection }: ReflectionFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?좎쭨
+            작성일
             <input
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("reflection_date", event.target.value)}
@@ -109,7 +109,8 @@ export function ReflectionForm({ mode, reflection }: ReflectionFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?ㅻ뒛 諛곗슫 ??            <textarea
+            오늘 배운 점
+            <textarea
               className="mt-1 min-h-28 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("learned", event.target.value)}
               required
@@ -122,21 +123,23 @@ export function ReflectionForm({ mode, reflection }: ReflectionFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?ㅻ뒛 ?대젮?좊뜕 ??            <textarea
+            어려웠던 점
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("difficult", event.target.value)}
               value={values.difficult}
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?ㅻ뒛 ?섑븳 ??            <textarea
+            잘한 점
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("good", event.target.value)}
               value={values.good}
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?댁씪 ?곸슜???됰룞
+            내일 적용할 행동
             <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("tomorrow_action", event.target.value)}
@@ -149,21 +152,24 @@ export function ReflectionForm({ mode, reflection }: ReflectionFormProps) {
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <div className="space-y-4">
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            ?곸궗 ?먮뒗 ?숇즺???而ㅻ??덉??댁뀡?먯꽌 諛곗슫 ??            <textarea
+            커뮤니케이션 인사이트
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("communication_lesson", event.target.value)}
               value={values.communication_lesson}
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            湲곗닠?곸쑝濡?諛곗슫 ??            <textarea
+            기술 인사이트
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("technical_lesson", event.target.value)}
               value={values.technical_lesson}
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            媛먯젙?곸쑝濡?愿由ы빐??????            <textarea
+            감정 관리 포인트
+            <textarea
               className="mt-1 min-h-24 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
               onChange={(event) => updateField("emotional_care", event.target.value)}
               value={values.emotional_care}
