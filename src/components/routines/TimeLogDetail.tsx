@@ -92,7 +92,7 @@ export function TimeLogDetail() {
         <h2 className="mt-3 text-2xl font-bold text-[#1F2F5C]">{timeLog.activity}</h2>
         <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
           <div>
-            <dt className="font-semibold text-[#6B7280]">날짜</dt>
+            <dt className="font-semibold text-[#6B7280]">작성일</dt>
             <dd className="mt-1 text-[#111827]">{timeLog.log_date}</dd>
           </div>
           <div>
@@ -106,12 +106,6 @@ export function TimeLogDetail() {
             <dt className="font-semibold text-[#6B7280]">집중도</dt>
             <dd className="mt-1 text-[#111827]">
               {timeLog.focus_score ? `${timeLog.focus_score}/5` : "-"}
-            </dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-[#6B7280]">만족도</dt>
-            <dd className="mt-1 text-[#111827]">
-              {timeLog.satisfaction ? `${timeLog.satisfaction}/5` : "-"}
             </dd>
           </div>
         </dl>

@@ -104,7 +104,7 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
             />
           </label>
           <label className="block text-sm font-semibold text-[#1F2F5C]">
-            업무 유형
+            유형
             <select
               className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
               onChange={(event) =>
@@ -155,9 +155,10 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
               value={values.activity}
             />
           </label>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3">
             <label className="block text-sm font-semibold text-[#1F2F5C]">
-              집중도              <input
+              집중도
+              <input
                 className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
                 max={5}
                 min={1}
@@ -165,17 +166,6 @@ export function TimeLogForm({ mode, timeLog }: TimeLogFormProps) {
                 placeholder="1-5"
                 type="number"
                 value={values.focus_score}
-              />
-            </label>
-            <label className="block text-sm font-semibold text-[#1F2F5C]">
-              만족도              <input
-                className="mt-1 w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
-                max={5}
-                min={1}
-                onChange={(event) => updateField("satisfaction", event.target.value)}
-                placeholder="1-5"
-                type="number"
-                value={values.satisfaction}
               />
             </label>
           </div>
