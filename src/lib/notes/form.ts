@@ -8,6 +8,15 @@ export type NoteFormValues = {
   entry_date: string;
   tags: string;
   fields: Record<string, string>;
+  images: NoteImage[];
+};
+
+export type NoteImage = {
+  id: string;
+  fileName: string;
+  previewUrl: string;
+  description: string;
+  createdAt: string;
 };
 
 export function getTodayDate() {
@@ -49,6 +58,7 @@ export function getInitialNoteFormValues(note?: Note): NoteFormValues {
     entry_date: note?.entry_date ?? getTodayDate(),
     tags: note ? stringifyTags(note.tags) : "",
     fields: note ? getJsonRecord(note.fields) : {},
+    images: [],
   };
 }
 

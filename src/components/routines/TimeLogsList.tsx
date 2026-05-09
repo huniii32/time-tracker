@@ -7,6 +7,7 @@ import { listTimeLogs } from "@/lib/queries/timeLogs";
 import { formatDuration } from "@/lib/routines/timeLogs";
 import { createClient } from "@/lib/supabase/browser";
 import type { TimeLog } from "@/types";
+import { RoutineProgressSummary } from "./RoutineProgressSummary";
 import { TimeLogCategoryBadge } from "./TimeLogBadges";
 
 export function TimeLogsList() {
@@ -48,6 +49,14 @@ export function TimeLogsList() {
   return (
     <div className="space-y-4">
       {error ? <p className="text-sm text-[#C92735]">{error}</p> : null}
+
+      <RoutineProgressSummary timeLogs={timeLogs} />
+
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-bold text-[#1F2F5C]">오늘의 시간 기록</h2>
+        </div>
+      </div>
 
       {timeLogs.length === 0 ? (
         <Card>

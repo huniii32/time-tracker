@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useRouter } from "next/navigation";
-import { FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/browser";
 import { createNote, updateNote } from "@/lib/queries/notes";
 import { getNoteTypeConfig, noteTypeConfigs } from "@/lib/notes/config";
@@ -10,6 +10,7 @@ import {
   buildNoteUpdate,
   getInitialNoteFormValues,
   type NoteFormValues,
+  type NoteImage,
 } from "@/lib/notes/form";
 import type { Note, NoteType } from "@/types";
 
@@ -18,13 +19,32 @@ type NoteFormProps = {
   mode: "create" | "edit";
 };
 
+const imageEnabledNoteTypes: NoteType[] = [
+  "company",
+  "manager",
+  "dictionary",
+  "coworker",
+  "learning",
+];
+
+const acceptedImageTypes = ["image/jpeg", "image/png", "image/webp"];
+
 export function NoteForm({ mode, note }: NoteFormProps) {
   const router = useRouter();
   const initialValues = useMemo(() => getInitialNoteFormValues(note), [note]);
   const [values, setValues] = useState<NoteFormValues>(initialValues);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [previewImage, setPreviewImage] = useState<NoteImage | null>(null);
+  const imagePreviewUrlsRef = useRef<string[]>([]);
   const selectedConfig = getNoteTypeConfig(values.note_type);
+  const canAttachImages = imageEnabledNoteTypes.includes(values.note_type);
+
+  useEffect(() => {
+    return () => {
+      imagePreviewUrlsRef.current.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
+    };
+  }, []);
 
   function updateField(name: string, value: string) {
     setValues((current) => ({
@@ -40,6 +60,72 @@ export function NoteForm({ mode, note }: NoteFormProps) {
         ...current.fields,
         [name]: value,
       },
+    }));
+  }
+
+  function handleImageUpload(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    const validFiles = files.filter((file) => acceptedImageTypes.includes(file.type));
+
+    if (files.length !== validFiles.length) {
+      setError("jpg, jpeg, png, webp 형식의 이미지만 첨부할 수 있습니다.");
+    }
+
+    if (validFiles.length === 0) {
+      event.target.value = "";
+      return;
+    }
+
+    const nextImages = validFiles.map<NoteImage>((file) => {
+      const previewUrl = URL.createObjectURL(file);
+      imagePreviewUrlsRef.current.push(previewUrl);
+
+      return {
+        id: crypto.randomUUID(),
+        fileName: file.name,
+        previewUrl,
+        description: "",
+        createdAt: new Date().toISOString(),
+      };
+    });
+
+    setValues((current) => ({
+      ...current,
+      images: [...current.images, ...nextImages],
+    }));
+    event.target.value = "";
+  }
+
+  function handleImageRemove(imageId: string) {
+    setValues((current) => {
+      const removedImage = current.images.find((image) => image.id === imageId);
+
+      if (removedImage) {
+        URL.revokeObjectURL(removedImage.previewUrl);
+        imagePreviewUrlsRef.current = imagePreviewUrlsRef.current.filter(
+          (previewUrl) => previewUrl !== removedImage.previewUrl,
+        );
+      }
+
+      return {
+        ...current,
+        images: current.images.filter((image) => image.id !== imageId),
+      };
+    });
+
+    setPreviewImage((current) => (current?.id === imageId ? null : current));
+  }
+
+  function handleImagePreview(image: NoteImage) {
+    setPreviewImage(image);
+  }
+
+  function handleImageDescriptionChange(imageId: string, description: string) {
+    setValues((current) => ({
+      ...current,
+      images: current.images.map((image) =>
+        image.id === imageId ? { ...image, description } : image,
+      ),
     }));
   }
 
@@ -167,6 +253,76 @@ export function NoteForm({ mode, note }: NoteFormProps) {
         </div>
       </div>
 
+      {canAttachImages ? (
+        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-base font-bold text-[#1F2F5C]">이미지 첨부</h2>
+              <p className="mt-1 text-sm text-[#6B7280]">
+                업무 화면, 회의 자료, 학습 이미지 등을 첨부해보세요.
+              </p>
+            </div>
+            <label className="inline-flex cursor-pointer items-center justify-center rounded-xl bg-[#1F2F5C] px-4 py-3 text-sm font-bold text-white shadow-sm">
+              이미지 추가
+              <input
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                aria-label="이미지 추가"
+                className="sr-only"
+                multiple
+                onChange={handleImageUpload}
+                type="file"
+              />
+            </label>
+          </div>
+
+          {values.images.length === 0 ? (
+            <div className="mt-4 rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] px-4 py-6 text-center text-sm text-[#6B7280]">
+              업무 화면, 회의 자료, 학습 이미지 등을 첨부해보세요.
+            </div>
+          ) : (
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {values.images.map((image) => (
+                <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3" key={image.id}>
+                  <div className="relative">
+                    <button
+                      aria-label={`${image.fileName} 이미지 삭제`}
+                      className="absolute right-2 top-2 rounded-full bg-[#0B1F4D] px-2 py-1 text-xs font-bold text-white shadow-sm"
+                      onClick={() => handleImageRemove(image.id)}
+                      type="button"
+                    >
+                      삭제
+                    </button>
+                    <button
+                      className="block w-full"
+                      onClick={() => handleImagePreview(image)}
+                      type="button"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        alt={image.description || image.fileName}
+                        className="h-40 w-full rounded-lg object-cover"
+                        src={image.previewUrl}
+                      />
+                    </button>
+                  </div>
+                  <p className="mt-2 truncate text-xs font-semibold text-[#374151]">
+                    {image.fileName}
+                  </p>
+                  <input
+                    className="mt-2 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-sm"
+                    onChange={(event) =>
+                      handleImageDescriptionChange(image.id, event.target.value)
+                    }
+                    placeholder="이미지 설명을 입력하세요"
+                    value={image.description}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : null}
+
       <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
         <h2 className="text-base font-bold text-[#1F2F5C]">
           {selectedConfig.label} 추가 정보
@@ -242,6 +398,42 @@ export function NoteForm({ mode, note }: NoteFormProps) {
           {saving ? "저장 중" : mode === "create" ? "작성" : "수정"}
         </button>
       </div>
+
+      {previewImage ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B1F4D]/80 p-4"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-xl bg-white shadow-xl">
+            <div className="flex items-center justify-between gap-3 border-b border-[#E5E7EB] px-4 py-3">
+              <div className="min-w-0">
+                <h2 className="truncate text-sm font-bold text-[#1F2F5C]">
+                  {previewImage.fileName}
+                </h2>
+                {previewImage.description ? (
+                  <p className="mt-1 text-xs text-[#6B7280]">{previewImage.description}</p>
+                ) : null}
+              </div>
+              <button
+                className="rounded-lg border border-[#E5E7EB] px-3 py-2 text-sm font-bold text-[#1F2F5C]"
+                onClick={() => setPreviewImage(null)}
+                type="button"
+              >
+                닫기
+              </button>
+            </div>
+            <div className="bg-[#F8FAFC] p-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt={previewImage.description || previewImage.fileName}
+                className="max-h-[72vh] w-full rounded-lg object-contain"
+                src={previewImage.previewUrl}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </form>
   );
 }
