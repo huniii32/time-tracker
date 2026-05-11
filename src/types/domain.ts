@@ -24,6 +24,14 @@ export type TimeLog = TableRow<"time_logs">;
 export type TimeLogInsert = TableInsert<"time_logs">;
 export type TimeLogUpdate = TableUpdate<"time_logs">;
 
+export type Routine = TableRow<"routines">;
+export type RoutineInsert = TableInsert<"routines">;
+export type RoutineUpdate = TableUpdate<"routines">;
+
+export type RoutineCompletion = TableRow<"routine_completions">;
+export type RoutineCompletionInsert = TableInsert<"routine_completions">;
+export type RoutineCompletionUpdate = TableUpdate<"routine_completions">;
+
 export type WeeklyReview = TableRow<"weekly_reviews">;
 export type WeeklyReviewInsert = TableInsert<"weekly_reviews">;
 export type WeeklyReviewUpdate = TableUpdate<"weekly_reviews">;

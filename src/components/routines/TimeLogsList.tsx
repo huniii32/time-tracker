@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/common/Card";
+import { getKstWeekRange } from "@/lib/dates";
 import { listTimeLogs } from "@/lib/queries/timeLogs";
+import { getRoutineCompletionsForRange } from "@/lib/routines/routineCompletions";
+import { getUserRoutines } from "@/lib/routines/routines";
 import {
   formatDuration,
   formatMinutes,
@@ -12,11 +15,14 @@ import {
   getTodayDate,
 } from "@/lib/routines/timeLogs";
 import { createClient } from "@/lib/supabase/browser";
-import type { TimeLog } from "@/types";
+import type { Routine, RoutineCompletion, TimeLog } from "@/types";
 import { RoutineProgressSummary } from "./RoutineProgressSummary";
 
 export function TimeLogsList() {
   const [timeLogs, setTimeLogs] = useState<TimeLog[]>([]);
+  const [routines, setRoutines] = useState<Routine[]>([]);
+  const [routineCompletions, setRoutineCompletions] = useState<RoutineCompletion[]>([]);
+  const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -33,12 +39,23 @@ export function TimeLogsList() {
         return;
       }
 
-      const { data, error: listError } = await listTimeLogs(supabase, user.id);
+      setUserId(user.id);
 
-      if (listError) {
-        setError(listError.message);
+      const weekRange = getKstWeekRange();
+      const [timeLogsResult, routinesResult, completionsResult] = await Promise.all([
+        listTimeLogs(supabase, user.id),
+        getUserRoutines(supabase, user.id),
+        getRoutineCompletionsForRange(supabase, user.id, weekRange.start.key, weekRange.end.key),
+      ]);
+
+      const loadError = timeLogsResult.error ?? routinesResult.error ?? completionsResult.error;
+
+      if (loadError) {
+        setError(loadError.message);
       } else {
-        setTimeLogs(data ?? []);
+        setTimeLogs(timeLogsResult.data ?? []);
+        setRoutines(routinesResult.data ?? []);
+        setRoutineCompletions(completionsResult.data ?? []);
       }
 
       setLoading(false);
@@ -64,7 +81,12 @@ export function TimeLogsList() {
     <div className="space-y-4">
       {error ? <p className="text-sm text-[#C92735]">{error}</p> : null}
 
-      <RoutineProgressSummary timeLogs={timeLogs} />
+      <RoutineProgressSummary
+        initialRoutineCompletions={routineCompletions}
+        initialRoutines={routines}
+        timeLogs={timeLogs}
+        userId={userId}
+      />
 
       <Card>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
