@@ -12,7 +12,7 @@
 4. 구현
 5. 타입 체크
 6. 린트
-7. 빌드
+7. Codex 환경 검증
 8. 기능별 수동 검증
 9. 범위 초과 여부 확인
 10. 완료 리포트 작성
@@ -38,22 +38,24 @@
 
 ## 현재 검증 명령어 상태
 
-현재 이 프로젝트에는 `package.json`이 없다. 따라서 실제 명령어는 TODO로 남긴다.
+현재 이 프로젝트에는 `package.json`이 있다.
 
-향후 `package.json` 생성 후 아래 항목을 확인한다.
+Codex 환경에서는 오래 걸리는 build 검증을 실행하지 않는다. build 검증은 사용자가 로컬 환경에서 직접 수행한다.
 
 ```text
-TODO: typecheck command
-TODO: lint command
-TODO: build command
-TODO: test command, if needed
+npm run typecheck
+npm run lint
+rg 'supabase[.]from|client[.]from' src/app src/components
+git diff --stat
+git status --short
 ```
 
 ## 작업 완료 후 검증 기준
 
 - 타입 체크가 통과해야 한다.
 - 린트가 통과해야 한다.
-- 빌드가 통과해야 한다.
+- Codex 환경에서 build는 실행하지 않는다.
+- build 검증은 사용자가 로컬 환경에서 직접 수행한다.
 - 주요 화면이 렌더링되어야 한다.
 - 로그인 상태별 접근 흐름을 확인해야 한다.
 - 모바일 화면 레이아웃을 확인해야 한다.
@@ -73,9 +75,9 @@ TODO: test command, if needed
 
 ## 빌드 기준
 
-- 배포 가능한 빌드가 통과해야 한다.
-- 환경 변수 누락이 있으면 문서화하고 완료 보고에 포함한다.
-- 빌드 실패를 남긴 채 다음 작업으로 넘기지 않는다.
+- Codex 환경에서는 build를 실행하지 않는다.
+- build 검증은 사용자가 로컬 환경에서 직접 수행한다.
+- 배포 전 로컬 또는 CI에서 build를 별도로 확인한다.
 
 ## 인증 검증 기준
 

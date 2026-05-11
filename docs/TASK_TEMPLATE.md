@@ -36,8 +36,17 @@
 ## 검증 방법
 
 ```text
-TODO: package.json 확인 후 사용 가능한 명령어 작성
+npm run typecheck
+npm run lint
+rg 'supabase[.]from|client[.]from' src/app src/components
+git diff --stat
+git status --short
 ```
+
+주의:
+
+- Codex 환경에서는 build를 실행하지 않는다.
+- build 검증은 사용자가 로컬 환경에서 직접 수행한다.
 
 ## 보고 형식
 
