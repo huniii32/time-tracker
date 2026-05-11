@@ -1,6 +1,14 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { Card } from "@/components/common/Card";
+import {
+  getKstDateParts,
+  getKstMonthCalendarDays,
+  getKstWeekRange,
+  kstWeekdayLabels,
+  type KstWeekDay,
+} from "@/lib/dates";
 import { getTimeLogCategoryLabel } from "@/lib/routines/timeLogs";
 import type { TimeLog, TimeLogCategory } from "@/types";
 
@@ -21,7 +29,11 @@ type RoutineDefinition = {
   keywords: string[];
 };
 
-const weekdayLabels = ["월", "화", "수", "목", "금", "토", "일"];
+type RoutineCompletionMap = Record<string, boolean>;
+
+type WeeklyRoutineGridItem = RoutineDefinition & {
+  days: Array<KstWeekDay & { completed: boolean }>;
+};
 
 const routineDefinitions: RoutineDefinition[] = [
   {
@@ -37,7 +49,7 @@ const routineDefinitions: RoutineDefinition[] = [
   {
     name: "운동",
     categories: ["exercise"],
-    keywords: ["운동", "헬스", "러닝", "산책"],
+    keywords: ["운동", "헬스", "산책", "러닝"],
   },
   {
     name: "회고 작성",
@@ -47,13 +59,29 @@ const routineDefinitions: RoutineDefinition[] = [
 ];
 
 export function RoutineProgressSummary({ timeLogs }: RoutineProgressSummaryProps) {
-  const today = new Date();
-  const todayKey = formatDateKey(today);
-  const monthDays = buildMonthDays(today, timeLogs, todayKey);
+  const { year, month } = getKstDateParts();
+  const monthDays = useMemo(() => buildMonthDays(timeLogs), [timeLogs]);
   const monthLogs = monthDays.flatMap((day) => day.logs);
-  const weekDays = buildWeekDays(today, todayKey);
-  const weekDayKeys = new Set(weekDays.map((day) => day.key));
-  const weekLogs = timeLogs.filter((timeLog) => weekDayKeys.has(timeLog.log_date));
+  const weekDays = useMemo(() => getKstWeekRange().days, []);
+  const weekDayKeys = useMemo(() => new Set(weekDays.map((day) => day.key)), [weekDays]);
+  const weekLogs = useMemo(
+    () => timeLogs.filter((timeLog) => weekDayKeys.has(timeLog.log_date)),
+    [timeLogs, weekDayKeys],
+  );
+  const weeklyRoutineGrid = useMemo(
+    () => buildWeeklyRoutineGrid(routineDefinitions, weekLogs, weekDays),
+    [weekLogs, weekDays],
+  );
+  const [routineCompletionOverrides, setRoutineCompletionOverrides] = useState<RoutineCompletionMap>({});
+
+  function handleRoutineCheckToggle(routineName: string, dateKey: string, fallbackCompleted: boolean) {
+    const key = getRoutineCompletionKey(routineName, dateKey);
+
+    setRoutineCompletionOverrides((current) => ({
+      ...current,
+      [key]: !getRoutineCompletionState(current, routineName, dateKey, fallbackCompleted),
+    }));
+  }
 
   return (
     <div className="space-y-4">
@@ -62,7 +90,7 @@ export function RoutineProgressSummary({ timeLogs }: RoutineProgressSummaryProps
           <div>
             <h2 className="text-lg font-bold text-[#1F2F5C]">월간 캘린더</h2>
             <p className="mt-1 text-sm text-[#6B7280]">
-              {today.getFullYear()}년 {today.getMonth() + 1}월 시간 기록
+              {year}년 {month}월 시간 기록
             </p>
           </div>
           <span className="rounded-lg bg-[#EEF4FF] px-3 py-1 text-xs font-bold text-[#1F2F5C]">
@@ -79,7 +107,7 @@ export function RoutineProgressSummary({ timeLogs }: RoutineProgressSummaryProps
         <div className="mt-4 overflow-x-auto">
           <div className="min-w-[620px]">
             <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-[#667085]">
-              {weekdayLabels.map((weekday) => (
+              {kstWeekdayLabels.map((weekday) => (
                 <div className="py-2" key={weekday}>
                   {weekday}
                 </div>
@@ -110,9 +138,7 @@ export function RoutineProgressSummary({ timeLogs }: RoutineProgressSummaryProps
                         </div>
                       ))}
                       {day.logs.length > 2 ? (
-                        <div className="text-[11px] font-bold text-[#667085]">
-                          +{day.logs.length - 2}개
-                        </div>
+                        <div className="text-[11px] font-bold text-[#667085]">+{day.logs.length - 2}개</div>
                       ) : null}
                     </div>
                   </div>
@@ -127,111 +153,102 @@ export function RoutineProgressSummary({ timeLogs }: RoutineProgressSummaryProps
 
       <Card>
         <h2 className="text-lg font-bold text-[#1F2F5C]">이번 주 루틴 현황</h2>
-        <p className="mt-1 text-sm text-[#6B7280]">반복 행동을 월~일 기준으로 확인합니다.</p>
+        <p className="mt-1 text-sm text-[#6B7280]">반복 행동을 월요일부터 일요일까지 체크합니다.</p>
 
         {weekLogs.length === 0 ? (
-          <div className="mt-4 rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] px-4 py-6 text-center text-sm text-[#6B7280]">
+          <div className="mt-4 rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] px-4 py-4 text-center text-sm text-[#6B7280]">
             아직 이번 주 루틴 기록이 없습니다.
           </div>
-        ) : (
-          <div className="mt-4 overflow-x-auto">
-            <div className="min-w-[560px] rounded-xl border border-[#E5E7EB]">
-              <div className="grid grid-cols-[minmax(140px,1.4fr)_repeat(7,minmax(56px,1fr))] border-b border-[#E5E7EB] bg-[#F8FAFC] text-center text-xs font-bold text-[#667085]">
-                <div className="px-3 py-3 text-left">루틴</div>
-                {weekDays.map((day) => (
-                  <div
-                    className={`px-2 py-3 ${day.isToday ? "bg-[#EEF4FF] text-[#0B1F4D]" : ""}`}
-                    key={day.key}
-                  >
-                    <span>{day.label}</span>
-                    <span className="mt-1 block font-semibold text-[#98A2B3]">{day.dayOfMonth}</span>
-                  </div>
-                ))}
-              </div>
-              {routineDefinitions.map((routine) => (
-                <div
-                  className="grid grid-cols-[minmax(140px,1.4fr)_repeat(7,minmax(56px,1fr))] border-b border-[#E5E7EB] text-center text-sm last:border-b-0"
-                  key={routine.name}
-                >
-                  <div className="truncate px-3 py-3 text-left font-semibold text-[#1F2F5C]">
-                    {routine.name}
-                  </div>
-                  {weekDays.map((day) => {
-                    const completed = isRoutineCompleted(routine, weekLogs, day.key);
+        ) : null}
 
-                    return (
-                      <div
-                        className={`px-2 py-3 ${day.isToday ? "bg-[#F8FAFC]" : ""}`}
-                        key={`${routine.name}-${day.key}`}
-                      >
-                        <span
-                          aria-label={completed ? "완료" : "미완료"}
-                          className={`inline-flex h-7 w-7 items-center justify-center rounded-full border text-xs font-bold ${
-                            completed
-                              ? "border-[#0B1F4D] bg-[#0B1F4D] text-white"
-                              : "border-[#CBD5E1] bg-white text-[#CBD5E1]"
-                          }`}
-                        >
-                          {completed ? "✓" : ""}
-                        </span>
-                      </div>
-                    );
-                  })}
+        <div className="mt-4 overflow-x-auto">
+          <div className="min-w-[620px] rounded-xl border border-[#E5E7EB]">
+            <div className="grid grid-cols-[minmax(140px,1.4fr)_repeat(7,minmax(64px,1fr))] border-b border-[#E5E7EB] bg-[#F8FAFC] text-center text-xs font-bold text-[#667085]">
+              <div className="px-3 py-3 text-left">루틴</div>
+              {weekDays.map((day) => (
+                <div
+                  className={`px-2 py-3 ${day.isToday ? "bg-[#EEF4FF] text-[#0B1F4D]" : ""}`}
+                  key={day.key}
+                >
+                  <span>{day.label}</span>
+                  <span className="mt-1 block font-semibold text-[#98A2B3]">{day.dayOfMonth}</span>
                 </div>
               ))}
             </div>
+            {weeklyRoutineGrid.map((routine) => (
+              <div
+                className="grid grid-cols-[minmax(140px,1.4fr)_repeat(7,minmax(64px,1fr))] border-b border-[#E5E7EB] text-center text-sm last:border-b-0"
+                key={routine.name}
+              >
+                <div className="truncate px-3 py-3 text-left font-semibold text-[#1F2F5C]">{routine.name}</div>
+                {routine.days.map((day) => {
+                  const completed = getRoutineCompletionState(
+                    routineCompletionOverrides,
+                    routine.name,
+                    day.key,
+                    day.completed,
+                  );
+
+                  return (
+                    <div className={`px-2 py-3 ${day.isToday ? "bg-[#F8FAFC]" : ""}`} key={`${routine.name}-${day.key}`}>
+                      <button
+                        aria-label={`${routine.name} ${day.label}요일 ${completed ? "완료" : "미완료"}`}
+                        aria-pressed={completed}
+                        className={`inline-flex h-10 w-10 items-center justify-center rounded-full border text-sm font-bold transition hover:border-[#0B1F4D] focus:outline-none focus:ring-2 focus:ring-[#0B1F4D] focus:ring-offset-2 ${
+                          completed
+                            ? "border-[#0B1F4D] bg-[#0B1F4D] text-white"
+                            : "border-[#CBD5E1] bg-white text-[#CBD5E1]"
+                        }`}
+                        onClick={() => handleRoutineCheckToggle(routine.name, day.key, day.completed)}
+                        type="button"
+                      >
+                        {completed ? "✓" : ""}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+        <p className="mt-3 text-xs text-[#98A2B3]">
+          체크 상태는 현재 화면에서 즉시 반영되며, 별도 저장 구조가 없어 새로고침 후에는 기존 시간 기록 기준으로 다시 표시됩니다.
+        </p>
       </Card>
     </div>
   );
 }
 
-function buildMonthDays(today: Date, timeLogs: TimeLog[], todayKey: string): CalendarDay[] {
-  const year = today.getFullYear();
-  const month = today.getMonth();
-  const firstDate = new Date(year, month, 1);
-  const lastDate = new Date(year, month + 1, 0);
-  const leadingEmptyDays = (firstDate.getDay() + 6) % 7;
-  const logsByDate = groupLogsByDate(timeLogs);
-  const days: CalendarDay[] = Array.from({ length: leadingEmptyDays }, () => ({
-    key: "",
-    dayOfMonth: 0,
-    isToday: false,
-    logs: [],
+export function buildWeeklyRoutineGrid(
+  routines: RoutineDefinition[],
+  weekLogs: TimeLog[],
+  weekDays: KstWeekDay[],
+): WeeklyRoutineGridItem[] {
+  return routines.map((routine) => ({
+    ...routine,
+    days: weekDays.map((day) => ({
+      ...day,
+      completed: isRoutineCompleted(routine, weekLogs, day.key),
+    })),
   }));
-
-  for (let day = 1; day <= lastDate.getDate(); day += 1) {
-    const date = new Date(year, month, day);
-    const key = formatDateKey(date);
-
-    days.push({
-      key,
-      dayOfMonth: day,
-      isToday: key === todayKey,
-      logs: logsByDate.get(key) ?? [],
-    });
-  }
-
-  return days;
 }
 
-function buildWeekDays(today: Date, todayKey: string) {
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+export function getRoutineCompletionState(
+  completions: RoutineCompletionMap,
+  routineName: string,
+  dateKey: string,
+  fallbackCompleted: boolean,
+) {
+  return completions[getRoutineCompletionKey(routineName, dateKey)] ?? fallbackCompleted;
+}
 
-  return weekdayLabels.map((label, index) => {
-    const date = new Date(monday);
-    date.setDate(monday.getDate() + index);
-    const key = formatDateKey(date);
+function buildMonthDays(timeLogs: TimeLog[]): CalendarDay[] {
+  const logsByDate = groupLogsByDate(timeLogs);
 
-    return {
-      label,
-      key,
-      dayOfMonth: date.getDate(),
-      isToday: key === todayKey,
-    };
-  });
+  return getKstMonthCalendarDays().map((day) => ({
+    ...day,
+    logs: day.key ? (logsByDate.get(day.key) ?? []) : [],
+  }));
 }
 
 function groupLogsByDate(timeLogs: TimeLog[]) {
@@ -262,10 +279,6 @@ function isRoutineCompleted(routine: RoutineDefinition, weekLogs: TimeLog[], dat
   });
 }
 
-function formatDateKey(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
+function getRoutineCompletionKey(routineName: string, dateKey: string) {
+  return `${routineName}:${dateKey}`;
 }

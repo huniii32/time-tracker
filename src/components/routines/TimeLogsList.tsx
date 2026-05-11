@@ -93,21 +93,15 @@ export function TimeLogsList() {
                 key={timeLog.id}
               >
                 <div className="pt-1 text-right">
-                  <div className="text-sm font-extrabold text-[#1F2F5C]">
-                    {timeLog.start_time.slice(0, 5)}
-                  </div>
-                  <div className="text-xs font-semibold text-[#667085]">
-                    {timeLog.end_time.slice(0, 5)}
-                  </div>
+                  <div className="text-sm font-extrabold text-[#1F2F5C]">{timeLog.start_time.slice(0, 5)}</div>
+                  <div className="text-xs font-semibold text-[#667085]">{timeLog.end_time.slice(0, 5)}</div>
                 </div>
                 <div className="relative border-l-2 border-[#D8E2F6] pl-4">
                   <span className="absolute -left-[7px] top-2 h-3 w-3 rounded-full border-2 border-white bg-[#0B1F4D]" />
                   <div className="rounded-xl border border-[#E3E8F2] bg-white p-4 shadow-sm">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div className="min-w-0">
-                        <h3 className="truncate text-base font-bold text-[#1F2F5C]">
-                          {timeLog.activity}
-                        </h3>
+                        <h3 className="truncate text-base font-bold text-[#1F2F5C]">{timeLog.activity}</h3>
                         <p className="mt-1 text-sm text-[#6B7280]">
                           {getTimeLogCategoryLabel(timeLog.category)} · 집중도{" "}
                           {timeLog.focus_score ? `${timeLog.focus_score}/5` : "-"}
@@ -117,11 +111,7 @@ export function TimeLogsList() {
                         {formatDuration(timeLog.start_time, timeLog.end_time)}
                       </span>
                     </div>
-                    {timeLog.memo ? (
-                      <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#4B5563]">
-                        {timeLog.memo}
-                      </p>
-                    ) : null}
+                    {timeLog.memo ? <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#4B5563]">{timeLog.memo}</p> : null}
                   </div>
                 </div>
               </Link>

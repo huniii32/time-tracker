@@ -1,3 +1,4 @@
+import { getKstTodayString } from "@/lib/dates";
 import type { WeeklyReview, WeeklyReviewInsert, WeeklyReviewUpdate } from "@/types";
 
 export type WeeklyReviewFormValues = {
@@ -13,7 +14,7 @@ export type WeeklyReviewFormValues = {
 };
 
 export function getTodayDate() {
-  return new Date().toISOString().slice(0, 10);
+  return getKstTodayString();
 }
 
 export function getInitialWeeklyReviewFormValues(

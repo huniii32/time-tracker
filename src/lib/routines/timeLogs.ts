@@ -1,3 +1,4 @@
+import { getKstTodayString } from "@/lib/dates";
 import type { TimeLog, TimeLogCategory, TimeLogInsert, TimeLogUpdate } from "@/types";
 
 export const timeLogCategoryOptions: Array<{ value: TimeLogCategory; label: string }> = [
@@ -53,7 +54,7 @@ export function normalizeTimeLogCategory(category: TimeLogCategory) {
 }
 
 export function getTodayDate() {
-  return new Date().toISOString().slice(0, 10);
+  return getKstTodayString();
 }
 
 export function getInitialTimeLogFormValues(timeLog?: TimeLog): TimeLogFormValues {

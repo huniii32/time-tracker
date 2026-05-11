@@ -49,6 +49,9 @@ const defaultForm: SettingsFormState = {
   default_start_page: "home",
 };
 
+const profileInputClass =
+  "min-w-0 rounded-xl border border-[#D0D7E2] bg-white px-3 py-3 text-base text-[#111827] outline-none transition focus:border-[#0B1F4D] focus:ring-2 focus:ring-[#D7E3FF]";
+
 function toFormState(settings: UserSettings | null): SettingsFormState {
   if (!settings) {
     return defaultForm;
@@ -157,34 +160,38 @@ export function SettingsForm() {
           <p className="text-sm font-extrabold text-[#C92735]">프로필 설정</p>
           <h2 className="mt-1 text-xl font-extrabold text-[#0B1F4D]">기본 정보</h2>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="space-y-2">
+        <div className="grid gap-4">
+          <label className="grid gap-2 sm:grid-cols-[90px_1fr] sm:items-center">
             <span className="text-sm font-bold text-[#0B1F4D]">이름</span>
             <input
+              className={profileInputClass}
               onChange={(event) => setForm((current) => ({ ...current, display_name: event.target.value }))}
               placeholder="홍길동"
               value={form.display_name}
             />
           </label>
-          <label className="space-y-2">
+          <label className="grid gap-2 sm:grid-cols-[90px_1fr] sm:items-center">
             <span className="text-sm font-bold text-[#0B1F4D]">입사일</span>
             <input
+              className={profileInputClass}
               onChange={(event) => setForm((current) => ({ ...current, joined_at: event.target.value }))}
               type="date"
               value={form.joined_at}
             />
           </label>
-          <label className="space-y-2">
+          <label className="grid gap-2 sm:grid-cols-[90px_1fr] sm:items-center">
             <span className="text-sm font-bold text-[#0B1F4D]">직무</span>
             <input
+              className={profileInputClass}
               onChange={(event) => setForm((current) => ({ ...current, role: event.target.value }))}
               placeholder="Frontend Developer"
               value={form.role}
             />
           </label>
-          <label className="space-y-2">
+          <label className="grid gap-2 sm:grid-cols-[90px_1fr] sm:items-center">
             <span className="text-sm font-bold text-[#0B1F4D]">소속 팀</span>
             <input
+              className={profileInputClass}
               onChange={(event) => setForm((current) => ({ ...current, team: event.target.value }))}
               placeholder="Product Team"
               value={form.team}
@@ -243,7 +250,7 @@ export function SettingsForm() {
           <h2 className="mt-1 text-xl font-extrabold text-[#0B1F4D]">기본 시작 화면</h2>
         </div>
         <label className="block space-y-2">
-          <span className="text-sm font-bold text-[#0B1F4D]">앱 진입 후 기본 화면</span>
+          <span className="text-sm font-bold text-[#0B1F4D]">앱 진입 시 기본 화면</span>
           <select
             onChange={(event) =>
               setForm((current) => ({ ...current, default_start_page: event.target.value as DefaultStartPage }))
