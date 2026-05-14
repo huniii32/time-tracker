@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Card } from "@/components/common/Card";
+import { DashboardCard, EmptyState, GhostButton, MetricCard, Pill, PrimaryButton } from "@/components/common/ui";
 import { listReflections } from "@/lib/queries/reflections";
 import { createClient } from "@/lib/supabase/browser";
 import type { Reflection } from "@/types";
@@ -21,7 +21,7 @@ export function ReflectionsList() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        setError("로그인이 필요합니다.");
+        setError("Login is required.");
         setLoading(false);
         return;
       }
@@ -41,20 +41,41 @@ export function ReflectionsList() {
   }, []);
 
   if (loading) {
-    return <Card>회고를 불러오는 중입니다.</Card>;
+    return <DashboardCard>Loading reflections...</DashboardCard>;
   }
+
+  const latestReflection = reflections[0];
 
   return (
     <div className="space-y-4">
-      {error ? <p className="text-sm text-[#C92735]">{error}</p> : null}
+      {error ? <p className="text-sm text-[#78716c]">{error}</p> : null}
+
+      <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <DashboardCard className="rounded-2xl">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-xs font-medium text-[#78716c]">Today reflection</p>
+              <h2 className="mt-2 text-xl font-semibold text-[#0c0a09]">Write today</h2>
+              <p className="mt-2 text-sm leading-6 text-[#78716c]">
+                Capture what you learned, what was difficult, and what to try tomorrow.
+              </p>
+            </div>
+            <Link href="/reflections/new">
+              <PrimaryButton>Write</PrimaryButton>
+            </Link>
+          </div>
+        </DashboardCard>
+        <MetricCard
+          detail={latestReflection ? latestReflection.reflection_date : "No recent reflection yet."}
+          label="Total reflections"
+          value={`${reflections.length}`}
+        />
+      </div>
 
       {reflections.length === 0 ? (
-        <Card>
-          <h2 className="font-semibold text-[#1F2F5C]">아직 작성된 회고가 없습니다.</h2>
-          <p className="mt-2 text-sm text-[#6B7280]">
-            오늘의 기록을 남기고 내일의 행동을 정리해보세요.
-          </p>
-        </Card>
+        <DashboardCard>
+          <EmptyState description="Write a short reflection and decide tomorrow's next action." title="No reflections yet." />
+        </DashboardCard>
       ) : (
         <div className="space-y-3">
           {reflections.map((reflection) => {
@@ -63,75 +84,63 @@ export function ReflectionsList() {
             const formattedDate = formatReflectionDate(reflection.reflection_date);
 
             return (
-              <Card key={reflection.id}>
+              <DashboardCard key={reflection.id}>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                      <h2 className="text-xl font-extrabold tracking-normal text-[#1F2F5C]">
+                      <h2 className="text-xl font-semibold tracking-normal text-[#0c0a09]">
                         {formattedDate.date}
                       </h2>
-                      <span className="text-sm font-bold text-[#667085]">{formattedDate.weekday}</span>
+                      <span className="text-sm font-medium text-[#78716c]">{formattedDate.weekday}</span>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {tags.map((tag) => (
-                        <span
-                          className="max-w-full truncate rounded-full bg-[#EEF4FF] px-3 py-1 text-xs font-bold text-[#1F2F5C]"
-                          key={`${reflection.id}-${tag}`}
-                        >
-                          #{tag}
-                        </span>
+                        <Pill key={`${reflection.id}-${tag}`}>#{tag}</Pill>
                       ))}
                     </div>
                   </div>
                   <div className="flex shrink-0 justify-end gap-2 sm:self-end">
-                    <button
-                      className="rounded-lg border border-[#CBD5E1] bg-white px-4 py-2 text-sm font-bold text-[#1F2F5C]"
-                      onClick={() => setOpenReflectionId(isOpen ? null : reflection.id)}
-                      type="button"
-                    >
-                      보기
+                    <button onClick={() => setOpenReflectionId(isOpen ? null : reflection.id)} type="button">
+                      <GhostButton>{isOpen ? "Close" : "View"}</GhostButton>
                     </button>
-                    <Link
-                      className="rounded-lg bg-[#0B1F4D] px-4 py-2 text-sm font-extrabold text-white"
-                      href={`/reflections/${reflection.id}/edit`}
-                    >
-                      수정
+                    <Link href={`/reflections/${reflection.id}/edit`}>
+                      <PrimaryButton>Edit</PrimaryButton>
                     </Link>
                   </div>
                 </div>
 
                 {isOpen ? (
-                  <div className="mt-5 border-t border-[#E5E7EB] pt-4">
+                  <div className="mt-5 border-t border-[#e5e7eb] pt-4">
                     <dl className="grid gap-4 text-sm sm:grid-cols-2">
                       {[
-                        ["성과", reflection.learned],
-                        ["어려웠던 점", reflection.difficult],
-                        ["잘한 점", reflection.good],
-                        ["내일 적용할 행동", reflection.tomorrow_action],
+                        ["Learned", reflection.learned],
+                        ["Difficult", reflection.difficult],
+                        ["Good", reflection.good],
+                        ["Tomorrow action", reflection.tomorrow_action],
                       ].map(([label, value]) => (
-                        <div key={label}>
-                          <dt className="text-xs font-bold text-[#667085]">{label}</dt>
-                          <dd className="mt-1 whitespace-pre-wrap leading-6 text-[#111827]">{value || "-"}</dd>
+                        <div className="rounded-[10px] border border-[#e5e7eb] bg-[#fafaf9] p-3" key={label}>
+                          <dt className="text-xs font-medium text-[#78716c]">{label}</dt>
+                          <dd className="mt-1 whitespace-pre-wrap leading-6 text-[#0c0a09]">{value || "-"}</dd>
                         </div>
                       ))}
                     </dl>
                     {(reflection.communication_lesson || reflection.technical_lesson || reflection.emotional_care) ? (
                       <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-3">
                         {[
-                          ["커뮤니케이션", reflection.communication_lesson],
-                          ["기술", reflection.technical_lesson],
-                          ["감정 관리", reflection.emotional_care],
+                          ["Communication", reflection.communication_lesson],
+                          ["Technical", reflection.technical_lesson],
+                          ["Emotional care", reflection.emotional_care],
                         ].map(([label, value]) => (
-                          <div key={label}>
-                            <dt className="text-xs font-bold text-[#667085]">{label}</dt>
-                            <dd className="mt-1 whitespace-pre-wrap leading-6 text-[#111827]">{value || "-"}</dd>
+                          <div className="rounded-[10px] border border-[#e5e7eb] bg-white p-3" key={label}>
+                            <dt className="text-xs font-medium text-[#78716c]">{label}</dt>
+                            <dd className="mt-1 whitespace-pre-wrap leading-6 text-[#0c0a09]">{value || "-"}</dd>
                           </div>
                         ))}
                       </dl>
                     ) : null}
                   </div>
                 ) : null}
-              </Card>
+              </DashboardCard>
             );
           })}
         </div>
@@ -177,18 +186,7 @@ function buildReflectionTags(reflection: Reflection) {
     return uniqueKeywords;
   }
 
-  return source.trim() ? ["업무회고"] : ["하루회고"];
+  return source.trim() ? ["reflection"] : ["daily"];
 }
 
-const reflectionTagStopWords = new Set([
-  "오늘",
-  "내일",
-  "그리고",
-  "하지만",
-  "그래서",
-  "점",
-  "것",
-  "수",
-  "등",
-  "더",
-]);
+const reflectionTagStopWords = new Set(["today", "tomorrow", "and", "but", "the", "a"]);

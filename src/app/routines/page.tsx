@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PrimaryButton } from "@/components/common/ui";
 import { AppShell } from "@/components/layout/AppShell";
 import { RoutineTabs } from "@/components/routines/RoutineTabs";
 import { TimeLogsList } from "@/components/routines/TimeLogsList";
@@ -9,11 +10,8 @@ export default function RoutinesPage() {
       <div className="space-y-4">
         <RoutineTabs />
         <div className="flex items-center justify-end">
-          <Link
-            className="rounded-xl bg-[#0B1F4D] px-4 py-3 text-sm font-extrabold text-white shadow-[0_10px_22px_rgba(11,31,77,0.18)]"
-            href="/routines/time-logs/new"
-          >
-            시간 기록 추가
+          <Link href="/routines/time-logs/new">
+            <PrimaryButton>시간 기록 추가</PrimaryButton>
           </Link>
         </div>
         <TimeLogsList />

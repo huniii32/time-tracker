@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PrimaryButton } from "@/components/common/ui";
 import { AppShell } from "@/components/layout/AppShell";
 import { ReflectionsList } from "@/components/reflections/ReflectionsList";
 
@@ -7,11 +8,8 @@ export default function ReflectionsPage() {
     <AppShell eyebrow="회고" title="하루 회고">
       <div className="space-y-4">
         <div className="flex items-center justify-end">
-          <Link
-            className="rounded-xl bg-[#0B1F4D] px-4 py-3 text-sm font-extrabold text-white shadow-[0_10px_22px_rgba(11,31,77,0.18)]"
-            href="/reflections/new"
-          >
-            회고 작성
+          <Link href="/reflections/new">
+            <PrimaryButton>회고 작성</PrimaryButton>
           </Link>
         </div>
         <ReflectionsList />

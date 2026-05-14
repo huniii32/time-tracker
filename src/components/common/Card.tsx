@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { DashboardCard } from "./ui";
 
 type CardProps = {
   children: ReactNode;
@@ -6,11 +7,5 @@ type CardProps = {
 };
 
 export function Card({ children, className = "" }: CardProps) {
-  return (
-    <section
-      className={`rounded-2xl border border-[#E3E8F2] bg-white p-4 leading-relaxed shadow-[0_12px_30px_rgba(11,31,77,0.06)] sm:p-5 ${className}`}
-    >
-      {children}
-    </section>
-  );
+  return <DashboardCard className={className}>{children}</DashboardCard>;
 }

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const tabs = [
   { href: "/routines", label: "데일리 시간" },
-  { href: "/routines/weekly-reviews", label: "위클리 피드백" },
+  { href: "/routines/weekly-reviews", label: "주간 회고" },
   { href: "/routines/goals", label: "목표 통합" },
 ];
 
@@ -13,7 +13,7 @@ export function RoutineTabs() {
   const pathname = usePathname();
 
   return (
-    <div className="grid grid-cols-3 rounded-2xl border border-[#E3E8F2] bg-white p-1.5 shadow-[0_10px_24px_rgba(11,31,77,0.05)]">
+    <div className="grid grid-cols-3 rounded-full border border-[#e5e7eb] bg-white p-1 shadow-[rgba(0,0,0,0.05)_0px_4px_16px_0px]">
       {tabs.map((tab) => {
         const active =
           tab.href === "/routines"
@@ -22,8 +22,8 @@ export function RoutineTabs() {
 
         return (
           <Link
-            className={`flex min-h-11 items-center justify-center rounded-xl px-2 py-2 text-center text-[13px] font-bold leading-4 sm:text-sm ${
-              active ? "bg-[#0B1F4D] text-white shadow-sm" : "text-[#667085]"
+            className={`flex min-h-10 items-center justify-center rounded-full px-2 py-2 text-center text-[13px] font-semibold leading-4 sm:text-sm ${
+              active ? "bg-[#3ba6f1] text-white shadow-sm" : "text-[#78716c]"
             }`}
             href={tab.href}
             key={tab.href}

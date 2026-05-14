@@ -2,15 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Card } from "@/components/common/Card";
+import { DashboardCard, EmptyState, MetricCard, Pill } from "@/components/common/ui";
 import { listTasks, updateTask } from "@/lib/queries/tasks";
-import {
-  getTaskStatusLabel,
-  isDueSoon,
-  isOverdue,
-  taskStatusOptions,
-} from "@/lib/tasks/config";
 import { createClient } from "@/lib/supabase/browser";
+import { getTaskStatusLabel, isDueSoon, isOverdue, taskStatusOptions } from "@/lib/tasks/config";
 import type { Task, TaskStatus } from "@/types";
 import { TaskPriorityBadge, TaskStatusBadge } from "./TaskBadges";
 
@@ -29,7 +24,7 @@ export function TasksList() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        setError("로그인이 필요합니다.");
+        setError("Login is required.");
         setLoading(false);
         return;
       }
@@ -56,6 +51,10 @@ export function TasksList() {
     return tasks.filter((task) => task.status === statusFilter);
   }, [statusFilter, tasks]);
 
+  const activeCount = tasks.filter((task) => task.status !== "done").length;
+  const doneCount = tasks.filter((task) => task.status === "done").length;
+  const dueSoonCount = tasks.filter((task) => isDueSoon(task.due_date, task.status) || isOverdue(task.due_date, task.status)).length;
+
   async function handleStatusChange(task: Task, status: TaskStatus) {
     setError("");
     setUpdatingId(task.id);
@@ -66,14 +65,12 @@ export function TasksList() {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      setError("로그인이 필요합니다.");
+      setError("Login is required.");
       setUpdatingId(null);
       return;
     }
 
-    const { data, error: updateError } = await updateTask(supabase, user.id, task.id, {
-      status,
-    });
+    const { data, error: updateError } = await updateTask(supabase, user.id, task.id, { status });
 
     if (updateError) {
       setError(updateError.message);
@@ -85,20 +82,26 @@ export function TasksList() {
   }
 
   if (loading) {
-    return <Card>업무를 불러오는 중입니다.</Card>;
+    return <DashboardCard>Loading tasks...</DashboardCard>;
   }
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm">
-        <label className="block text-sm font-semibold text-[#1F2F5C]">
-          상태 필터
+      <div className="grid gap-4 sm:grid-cols-3">
+        <MetricCard label="Active" value={`${activeCount}`} />
+        <MetricCard label="Done" value={`${doneCount}`} />
+        <MetricCard label="Needs attention" value={`${dueSoonCount}`} />
+      </div>
+
+      <DashboardCard className="p-4 sm:p-4">
+        <label className="block text-sm font-medium text-[#78716c]">
+          Status filter
           <select
-            className="mt-1 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
+            className="mt-2 w-full rounded-[10px] border border-[#d6d3d1] bg-white px-3 py-2.5 text-sm text-[#0c0a09] focus:border-[#3ba6f1] focus:outline-none focus:ring-2 focus:ring-[#c1e1f7]"
             onChange={(event) => setStatusFilter(event.target.value as TaskStatus | "all")}
             value={statusFilter}
           >
-            <option value="all">전체 업무</option>
+            <option value="all">All tasks</option>
             {taskStatusOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -106,17 +109,14 @@ export function TasksList() {
             ))}
           </select>
         </label>
-      </div>
+      </DashboardCard>
 
-      {error ? <p className="text-sm text-[#C92735]">{error}</p> : null}
+      {error ? <p className="text-sm text-[#78716c]">{error}</p> : null}
 
       {filteredTasks.length === 0 ? (
-        <Card>
-          <h2 className="font-semibold text-[#1F2F5C]">아직 업무가 없습니다.</h2>
-          <p className="mt-2 text-sm text-[#6B7280]">
-            맡은 업무의 목표, 마감기한, 상태를 먼저 기록해보세요.
-          </p>
-        </Card>
+        <DashboardCard>
+          <EmptyState description="Create a task with status, due date, and priority." title="No tasks yet." />
+        </DashboardCard>
       ) : (
         <div className="space-y-3">
           {filteredTasks.map((task) => {
@@ -124,37 +124,27 @@ export function TasksList() {
             const overdue = isOverdue(task.due_date, task.status);
 
             return (
-              <Card className={dueSoon || overdue ? "border-[#C92735]" : ""} key={task.id}>
-                <div className="flex items-start justify-between gap-3">
+              <DashboardCard className={dueSoon || overdue ? "border-[#d6d3d1]" : ""} key={task.id}>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap gap-2">
                       <TaskStatusBadge status={task.status} />
                       <TaskPriorityBadge priority={task.priority} />
-                      {overdue ? (
-                        <span className="rounded bg-[#FEF2F2] px-2 py-1 text-xs font-semibold text-[#C92735]">
-                          마감 지남
-                        </span>
-                      ) : null}
-                      {dueSoon ? (
-                        <span className="rounded bg-[#FEF2F2] px-2 py-1 text-xs font-semibold text-[#C92735]">
-                          마감 임박
-                        </span>
-                      ) : null}
+                      {overdue ? <Pill>Overdue</Pill> : null}
+                      {dueSoon ? <Pill>Due soon</Pill> : null}
                     </div>
                     <Link href={`/tasks/${task.id}`}>
-                      <h2 className="mt-2 text-lg font-bold text-[#1F2F5C]">{task.title}</h2>
+                      <h2 className="mt-3 text-lg font-semibold text-[#0c0a09]">{task.title}</h2>
                     </Link>
-                    <p className="mt-1 text-sm text-[#6B7280]">
-                      마감: {task.due_date ?? "-"} · 요청자: {task.requester ?? "-"}
+                    <p className="mt-1 text-sm text-[#78716c]">
+                      Due: {task.due_date ?? "-"} · Requester: {task.requester ?? "-"}
                     </p>
                   </div>
                   <select
-                    aria-label={`${task.title} 상태 변경`}
-                    className="shrink-0 rounded-lg border border-[#E5E7EB] bg-white px-2 py-2 text-sm"
+                    aria-label={`${task.title} status`}
+                    className="w-full shrink-0 rounded-[10px] border border-[#d6d3d1] bg-white px-3 py-2 text-sm text-[#0c0a09] sm:w-auto"
                     disabled={updatingId === task.id}
-                    onChange={(event) =>
-                      void handleStatusChange(task, event.target.value as TaskStatus)
-                    }
+                    onChange={(event) => void handleStatusChange(task, event.target.value as TaskStatus)}
                     value={task.status}
                   >
                     {taskStatusOptions.map((option) => (
@@ -164,27 +154,15 @@ export function TasksList() {
                     ))}
                   </select>
                 </div>
-                {task.goal ? (
-                  <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#374151]">
-                    {task.goal}
-                  </p>
-                ) : null}
+                {task.goal ? <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#78716c]">{task.goal}</p> : null}
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {task.satisfaction ? (
-                    <span className="rounded bg-[#F7F8FA] px-2 py-1 text-xs text-[#374151]">
-                      만족도 {task.satisfaction}/5
-                    </span>
-                  ) : null}
+                  {task.satisfaction ? <Pill>Satisfaction {task.satisfaction}/5</Pill> : null}
                   {task.tags.map((tag) => (
-                    <span className="rounded bg-[#F7F8FA] px-2 py-1 text-xs" key={tag}>
-                      #{tag}
-                    </span>
+                    <Pill key={tag}>#{tag}</Pill>
                   ))}
                 </div>
-                <p className="mt-3 text-xs text-[#6B7280]">
-                  상태: {getTaskStatusLabel(task.status)}
-                </p>
-              </Card>
+                <p className="mt-3 text-xs text-[#78716c]">Status: {getTaskStatusLabel(task.status)}</p>
+              </DashboardCard>
             );
           })}
         </div>

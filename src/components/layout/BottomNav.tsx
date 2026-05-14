@@ -15,7 +15,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-[#E3E8F2] bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_rgba(11,31,77,0.08)] backdrop-blur lg:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-[#e5e7eb] bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[rgba(0,0,0,0.05)_0px_-4px_16px_0px] backdrop-blur lg:hidden">
       <div className="mx-auto grid min-h-[72px] max-w-3xl grid-cols-5 gap-1 px-2 py-2">
         {navItems.map((item) => {
           const active =
@@ -27,10 +27,10 @@ export function BottomNav() {
 
           return (
             <Link
-              className={`flex min-h-12 items-center justify-center rounded-xl px-1 text-sm font-bold leading-none transition-colors ${
+              className={`flex min-h-12 items-center justify-center rounded-full px-1 text-sm font-semibold leading-none transition-colors ${
                 active
-                  ? "bg-[#0B1F4D] text-white shadow-[0_8px_18px_rgba(11,31,77,0.18)]"
-                  : "text-[#667085]"
+                  ? "bg-[#3ba6f1] text-white shadow-[rgba(0,0,0,0.05)_0px_4px_16px_0px]"
+                  : "text-[#78716c]"
               }`}
               href={item.href}
               key={item.href}

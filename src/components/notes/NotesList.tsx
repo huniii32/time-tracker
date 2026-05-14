@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Card } from "@/components/common/Card";
+import { AppInput, DashboardCard, EmptyState, Pill } from "@/components/common/ui";
+import { noteTypeConfigs } from "@/lib/notes/config";
 import { listNotes } from "@/lib/queries/notes";
 import { createClient } from "@/lib/supabase/browser";
-import { noteTypeConfigs } from "@/lib/notes/config";
 import type { Note, NoteType } from "@/types";
 import { NoteTypeBadge } from "./NoteTypeBadge";
 
@@ -24,7 +24,7 @@ export function NotesList() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        setError("로그인이 필요합니다.");
+        setError("Login is required.");
         setLoading(false);
         return;
       }
@@ -59,25 +59,24 @@ export function NotesList() {
   }, [notes, search, typeFilter]);
 
   if (loading) {
-    return <Card>노트를 불러오는 중입니다.</Card>;
+    return <DashboardCard>Loading notes...</DashboardCard>;
   }
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-[#E5E7EB] bg-white p-4 shadow-sm">
-        <div className="space-y-3">
-          <input
-            className="w-full rounded-lg border border-[#E5E7EB] px-3 py-3 text-base"
+      <DashboardCard className="p-4 sm:p-4">
+        <div className="grid gap-3 md:grid-cols-[1fr_220px]">
+          <AppInput
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="제목, 내용, 태그 검색"
+            placeholder="Search title, content, tags"
             value={search}
           />
           <select
-            className="w-full rounded-lg border border-[#E5E7EB] bg-white px-3 py-3 text-base"
+            className="w-full rounded-[10px] border border-[#d6d3d1] bg-white px-3 py-2.5 text-sm text-[#0c0a09] focus:border-[#3ba6f1] focus:outline-none focus:ring-2 focus:ring-[#c1e1f7]"
             onChange={(event) => setTypeFilter(event.target.value as NoteType | "all")}
             value={typeFilter}
           >
-            <option value="all">전체 노트</option>
+            <option value="all">All notes</option>
             {noteTypeConfigs.map((config) => (
               <option key={config.type} value={config.type}>
                 {config.label}
@@ -85,44 +84,42 @@ export function NotesList() {
             ))}
           </select>
         </div>
-      </div>
+      </DashboardCard>
 
-      {error ? <p className="text-sm text-[#C92735]">{error}</p> : null}
+      {error ? <p className="text-sm text-[#78716c]">{error}</p> : null}
 
       {filteredNotes.length === 0 ? (
-        <Card>
-          <h2 className="font-semibold text-[#1F2F5C]">아직 노트가 없습니다.</h2>
-          <p className="mt-2 text-sm text-[#6B7280]">
-            회사 적응 과정에서 관찰한 내용을 첫 노트로 남겨보세요.
-          </p>
-        </Card>
+        <DashboardCard>
+          <EmptyState
+            description="Record work context, company terms, and things you learned."
+            title="No notes yet."
+          />
+        </DashboardCard>
       ) : (
-        <div className="space-y-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredNotes.map((note) => (
-            <Link className="block" href={`/notes/${note.id}`} key={note.id}>
-              <Card>
+            <Link className="block h-full" href={`/notes/${note.id}`} key={note.id}>
+              <DashboardCard className="flex h-full flex-col transition hover:border-[#d6d3d1]">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <NoteTypeBadge noteType={note.note_type} />
-                    <h2 className="mt-2 text-lg font-bold text-[#1F2F5C]">{note.title}</h2>
+                    <h2 className="mt-3 line-clamp-2 text-lg font-semibold leading-snug text-[#0c0a09]">
+                      {note.title}
+                    </h2>
                   </div>
-                  <span className="shrink-0 text-xs text-[#6B7280]">
+                  <span className="shrink-0 text-xs text-[#78716c]">
                     {note.entry_date ?? note.created_at.slice(0, 10)}
                   </span>
                 </div>
-                <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#6B7280]">
-                  {note.content}
-                </p>
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#78716c]">{note.content}</p>
                 {note.tags.length > 0 ? (
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-4 flex flex-wrap gap-2">
                     {note.tags.map((tag) => (
-                      <span className="rounded bg-[#F7F8FA] px-2 py-1 text-xs" key={tag}>
-                        #{tag}
-                      </span>
+                      <Pill key={tag}>#{tag}</Pill>
                     ))}
                   </div>
                 ) : null}
-              </Card>
+              </DashboardCard>
             </Link>
           ))}
         </div>

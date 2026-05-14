@@ -2,18 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Card } from "@/components/common/Card";
+import { DashboardCard, EmptyState, MetricCard, Pill } from "@/components/common/ui";
 import { getKstWeekRange } from "@/lib/dates";
 import { listTimeLogs } from "@/lib/queries/timeLogs";
 import { getRoutineCompletionsForRange } from "@/lib/routines/routineCompletions";
 import { getUserRoutines } from "@/lib/routines/routines";
-import {
-  formatDuration,
-  formatMinutes,
-  getDurationMinutes,
-  getTimeLogCategoryLabel,
-  getTodayDate,
-} from "@/lib/routines/timeLogs";
+import { formatDuration, formatMinutes, getDurationMinutes, getTimeLogCategoryLabel, getTodayDate } from "@/lib/routines/timeLogs";
 import { createClient } from "@/lib/supabase/browser";
 import type { Routine, RoutineCompletion, TimeLog } from "@/types";
 import { RoutineProgressSummary } from "./RoutineProgressSummary";
@@ -65,7 +59,7 @@ export function TimeLogsList() {
   }, []);
 
   if (loading) {
-    return <Card>시간 기록을 불러오는 중입니다.</Card>;
+    return <DashboardCard>시간 기록을 불러오는 중입니다.</DashboardCard>;
   }
 
   const today = getTodayDate();
@@ -79,7 +73,7 @@ export function TimeLogsList() {
 
   return (
     <div className="space-y-4">
-      {error ? <p className="text-sm text-[#C92735]">{error}</p> : null}
+      {error ? <p className="text-sm text-[#78716c]">{error}</p> : null}
 
       <RoutineProgressSummary
         initialRoutineCompletions={routineCompletions}
@@ -88,59 +82,59 @@ export function TimeLogsList() {
         userId={userId}
       />
 
-      <Card>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MetricCard detail={today} label="오늘 기록 시간" value={formatMinutes(todayTotalMinutes)} />
+        <MetricCard label="오늘 기록 수" value={`${todayTimeLogs.length}건`} />
+      </div>
+
+      <DashboardCard>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-[#1F2F5C]">오늘의 시간 기록</h2>
-            <p className="mt-1 text-sm text-[#6B7280]">{today}</p>
+            <h2 className="text-lg font-semibold text-[#0c0a09]">오늘의 시간 기록</h2>
+            <p className="mt-1 text-sm text-[#78716c]">{today}</p>
           </div>
-          <span className="w-fit rounded-lg bg-[#EEF4FF] px-3 py-1 text-xs font-bold text-[#1F2F5C]">
-            총 {formatMinutes(todayTotalMinutes)}
-          </span>
+          <Pill>총 {formatMinutes(todayTotalMinutes)}</Pill>
         </div>
 
         {todayTimeLogs.length === 0 ? (
-          <div className="mt-4 rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] px-4 py-6">
-            <h2 className="font-semibold text-[#1F2F5C]">아직 시간 기록이 없습니다.</h2>
-            <p className="mt-2 text-sm text-[#6B7280]">
-              오늘 사용한 시간을 첫 데일리 기록으로 남겨보세요.
-            </p>
+          <div className="mt-4">
+            <EmptyState
+              description="오늘 사용한 시간을 첫 데일리 기록으로 남겨보세요."
+              title="아직 시간 기록이 없습니다."
+            />
           </div>
         ) : (
           <div className="mt-5 space-y-4">
             {todayTimeLogs.map((timeLog) => (
               <Link
-                className="grid grid-cols-[82px_1fr] gap-3 sm:grid-cols-[112px_1fr]"
+                className="grid grid-cols-[72px_1fr] gap-3 sm:grid-cols-[96px_1fr]"
                 href={`/routines/time-logs/${timeLog.id}`}
                 key={timeLog.id}
               >
                 <div className="pt-1 text-right">
-                  <div className="text-sm font-extrabold text-[#1F2F5C]">{timeLog.start_time.slice(0, 5)}</div>
-                  <div className="text-xs font-semibold text-[#667085]">{timeLog.end_time.slice(0, 5)}</div>
+                  <div className="text-sm font-semibold text-[#0c0a09]">{timeLog.start_time.slice(0, 5)}</div>
+                  <div className="text-xs font-medium text-[#78716c]">{timeLog.end_time.slice(0, 5)}</div>
                 </div>
-                <div className="relative border-l-2 border-[#D8E2F6] pl-4">
-                  <span className="absolute -left-[7px] top-2 h-3 w-3 rounded-full border-2 border-white bg-[#0B1F4D]" />
-                  <div className="rounded-xl border border-[#E3E8F2] bg-white p-4 shadow-sm">
+                <div className="relative border-l border-[#d6d3d1] pl-4">
+                  <span className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-[#3ba6f1]" />
+                  <div className="rounded-[10px] border border-[#e5e7eb] bg-white p-4 shadow-[rgba(0,0,0,0.05)_0px_4px_16px_0px]">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div className="min-w-0">
-                        <h3 className="truncate text-base font-bold text-[#1F2F5C]">{timeLog.activity}</h3>
-                        <p className="mt-1 text-sm text-[#6B7280]">
-                          {getTimeLogCategoryLabel(timeLog.category)} · 집중도{" "}
-                          {timeLog.focus_score ? `${timeLog.focus_score}/5` : "-"}
+                        <h3 className="truncate text-base font-semibold text-[#0c0a09]">{timeLog.activity}</h3>
+                        <p className="mt-1 text-sm text-[#78716c]">
+                          {getTimeLogCategoryLabel(timeLog.category)} · 집중도 {timeLog.focus_score ? `${timeLog.focus_score}/5` : "-"}
                         </p>
                       </div>
-                      <span className="w-fit shrink-0 rounded bg-[#F7F8FA] px-2 py-1 text-xs font-semibold text-[#374151]">
-                        {formatDuration(timeLog.start_time, timeLog.end_time)}
-                      </span>
+                      <Pill>{formatDuration(timeLog.start_time, timeLog.end_time)}</Pill>
                     </div>
-                    {timeLog.memo ? <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#4B5563]">{timeLog.memo}</p> : null}
+                    {timeLog.memo ? <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#78716c]">{timeLog.memo}</p> : null}
                   </div>
                 </div>
               </Link>
             ))}
           </div>
         )}
-      </Card>
+      </DashboardCard>
     </div>
   );
 }
